@@ -1106,6 +1106,63 @@ function ImageLightbox({ image, onClose }: { image: LightboxImage | null; onClos
   );
 }
 
+function SiteLoader() {
+  const [progress, setProgress] = React.useState(0);
+  const [isComplete, setIsComplete] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(true);
+
+  React.useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const duration = prefersReducedMotion ? 320 : 1350;
+    const startedAt = performance.now();
+    let frame = 0;
+    let completeTimer = 0;
+    let hideTimer = 0;
+
+    const animate = (now: number) => {
+      const elapsed = Math.min((now - startedAt) / duration, 1);
+      const eased = 1 - Math.pow(1 - elapsed, 3);
+      setProgress(Math.min(100, Math.round(eased * 100)));
+
+      if (elapsed < 1) {
+        frame = window.requestAnimationFrame(animate);
+        return;
+      }
+
+      completeTimer = window.setTimeout(() => setIsComplete(true), prefersReducedMotion ? 80 : 320);
+      hideTimer = window.setTimeout(() => setIsVisible(false), prefersReducedMotion ? 240 : 980);
+    };
+
+    document.body.classList.add("is-site-loading");
+    frame = window.requestAnimationFrame(animate);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(completeTimer);
+      window.clearTimeout(hideTimer);
+      document.body.classList.remove("is-site-loading");
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (!isVisible) {
+      document.body.classList.remove("is-site-loading");
+    }
+  }, [isVisible]);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className={`site-loader ${isComplete ? "is-complete" : ""}`} aria-live="polite" aria-label="Loading">
+      <div className="site-loader-counter">{progress}%</div>
+      <div className="site-loader-meta">
+        <span>Cheng Lu</span>
+        <span>Portfolio</span>
+      </div>
+    </div>
+  );
+}
+
 function SiteTools({ language, onToggleLanguage }: { language: Language; onToggleLanguage: () => void }) {
   React.useEffect(() => {
     document.documentElement.lang = language === "CN" ? "zh-CN" : "en";
@@ -1130,6 +1187,7 @@ function App() {
 
   return (
     <main className="bg-black">
+      <SiteLoader />
       <SiteTools language={language} onToggleLanguage={toggleLanguage} />
       <Hero language={language} />
       <Story language={language} />
