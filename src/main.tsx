@@ -59,6 +59,45 @@ function assetUrl(path: string) {
   return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
 }
 
+function getSitePreloadUrls() {
+  const urls = new Set<string>();
+
+  Object.values(persistedProfileState.mediaBySlot ?? {}).forEach((mediaItems) => {
+    mediaItems.forEach((media) => {
+      if (media.type.startsWith("image")) {
+        urls.add(assetUrl(media.url));
+      }
+    });
+  });
+
+  urls.add(assetUrl("/uploads/profile-media/contact-portrait.jpg"));
+  urls.add(assetUrl("/uploads/profile-media/wechat-qr.jpg"));
+
+  return [...urls];
+}
+
+function preloadImage(url: string) {
+  return new Promise<void>((resolve) => {
+    if (!document.querySelector(`link[rel="preload"][as="image"][href="${url}"]`)) {
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
+      link.href = url;
+      document.head.appendChild(link);
+    }
+
+    const image = new Image();
+    image.decoding = "async";
+    image.onload = () => resolve();
+    image.onerror = () => resolve();
+    image.src = url;
+  });
+}
+
+function warmSiteImages() {
+  return Promise.allSettled(getSitePreloadUrls().map(preloadImage));
+}
+
 const hiddenExpertiseIds = new Set(["sgad", "baidu-paramount", "ad-community", "production-map", "vibe-market", "mooncake"]);
 
 const expertiseItems: ExpertiseItem[] = [
@@ -1113,22 +1152,34 @@ function SiteLoader() {
 
   React.useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const duration = prefersReducedMotion ? 320 : 1350;
+    const minimumDuration = prefersReducedMotion ? 420 : 1500;
+    const maximumDuration = prefersReducedMotion ? 1000 : 3600;
     const startedAt = performance.now();
     let frame = 0;
     let completeTimer = 0;
     let hideTimer = 0;
+    let hasFinished = false;
+    let imagesAreWarm = false;
+
+    warmSiteImages().finally(() => {
+      imagesAreWarm = true;
+    });
 
     const animate = (now: number) => {
-      const elapsed = Math.min((now - startedAt) / duration, 1);
+      const elapsedMs = now - startedAt;
+      const elapsed = Math.min(elapsedMs / maximumDuration, 1);
       const eased = 1 - Math.pow(1 - elapsed, 3);
-      setProgress(Math.min(100, Math.round(eased * 100)));
+      const canFinish = elapsedMs >= minimumDuration && (imagesAreWarm || elapsedMs >= maximumDuration);
 
-      if (elapsed < 1) {
+      if (!canFinish) {
+        setProgress(Math.min(96, Math.round(eased * 96)));
         frame = window.requestAnimationFrame(animate);
         return;
       }
 
+      if (hasFinished) return;
+      hasFinished = true;
+      setProgress(100);
       completeTimer = window.setTimeout(() => setIsComplete(true), prefersReducedMotion ? 80 : 320);
       hideTimer = window.setTimeout(() => setIsVisible(false), prefersReducedMotion ? 240 : 980);
     };
