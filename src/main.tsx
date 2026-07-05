@@ -606,6 +606,7 @@ function Hero({ language }: { language: Language }) {
           loop
           muted
           playsInline
+          preload="metadata"
         />
         <div className="noise-overlay pointer-events-none absolute inset-0 opacity-[0.72] mix-blend-overlay" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/85" />
@@ -788,7 +789,7 @@ function ExpertiseSuccessStory({
         <div className="monolog-success-cover" aria-label={slot.title}>
           {media ? (
             media.type.startsWith("video") ? (
-              <video src={media.url} autoPlay loop muted playsInline />
+              <video src={media.url} autoPlay loop muted playsInline preload="none" />
             ) : (
               <button
                 type="button"
@@ -796,7 +797,7 @@ function ExpertiseSuccessStory({
                 aria-label={`查看${slot.title}`}
                 onClick={() => onOpenImage({ src: media.url, alt: media.name })}
               >
-                <img src={media.url} alt={media.name} />
+                <img src={media.url} alt={media.name} loading="lazy" decoding="async" />
               </button>
             )
           ) : (
@@ -1004,6 +1005,8 @@ function Contact({ language, onOpenImage }: { language: Language; onOpenImage: (
                 className="aspect-[4/5] w-full rounded-[1.25rem] object-cover object-[55%_68%] shadow-2xl shadow-black/40 md:mt-1 md:rounded-[1.5rem]"
                 src={contactPortraitUrl}
                 alt="程璐照片"
+                loading="lazy"
+                decoding="async"
               />
             </button>
           </div>
@@ -1097,7 +1100,7 @@ function ImageLightbox({ image, onClose }: { image: LightboxImage | null; onClos
         >
           关闭
         </button>
-        <img className="max-h-[82vh] max-w-full rounded-xl object-contain shadow-2xl shadow-black/60" src={image.src} alt={image.alt} />
+        <img className="max-h-[82vh] max-w-full rounded-xl object-contain shadow-2xl shadow-black/60" src={image.src} alt={image.alt} decoding="async" />
       </div>
     </div>
   );
