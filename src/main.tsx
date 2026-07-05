@@ -51,6 +51,14 @@ const persistedProfileState = persistedState as {
   mediaBySlot?: Record<string, UploadedMedia[]>;
 };
 
+function assetUrl(path: string) {
+  if (/^(https?:|mailto:|tel:|#)/.test(path)) {
+    return path;
+  }
+
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
+}
+
 const hiddenExpertiseIds = new Set(["sgad", "baidu-paramount", "ad-community", "production-map", "vibe-market", "mooncake"]);
 
 const expertiseItems: ExpertiseItem[] = [
@@ -730,7 +738,12 @@ function getExpertiseCover(item: ExpertiseItem, index: number) {
 
   return {
     slot,
-    media: persistedProfileState.mediaBySlot?.[slot.id]?.[0],
+    media: persistedProfileState.mediaBySlot?.[slot.id]?.[0]
+      ? {
+          ...persistedProfileState.mediaBySlot[slot.id][0],
+          url: assetUrl(persistedProfileState.mediaBySlot[slot.id][0].url),
+        }
+      : undefined,
   };
 }
 
@@ -964,7 +977,9 @@ function Education({ language }: { language: Language }) {
 
 function Contact({ language, onOpenImage }: { language: Language; onOpenImage: (image: LightboxImage) => void }) {
   const isEnglish = language === "EN";
-  const resumeUrl = isEnglish ? "/uploads/profile-media/resume-chenglu-en.pdf" : "/uploads/profile-media/resume-chenglu-cn.pdf";
+  const contactPortraitUrl = assetUrl("/uploads/profile-media/contact-portrait.jpg");
+  const wechatQrUrl = assetUrl("/uploads/profile-media/wechat-qr.jpg");
+  const resumeUrl = assetUrl(isEnglish ? "/uploads/profile-media/resume-chenglu-en.pdf" : "/uploads/profile-media/resume-chenglu-cn.pdf");
   const resumeFileName = isEnglish ? "CV_Cheng_Lu_2026.pdf" : "程璐-个人简历.pdf";
 
   return (
@@ -983,11 +998,11 @@ function Contact({ language, onOpenImage }: { language: Language; onOpenImage: (
               type="button"
               className="block w-full border-0 bg-transparent p-0 text-left"
               aria-label="查看程璐照片"
-              onClick={() => onOpenImage({ src: "/uploads/profile-media/contact-portrait.jpg", alt: "程璐照片" })}
+              onClick={() => onOpenImage({ src: contactPortraitUrl, alt: "程璐照片" })}
             >
               <img
                 className="aspect-[4/5] w-full rounded-[1.25rem] object-cover object-[55%_68%] shadow-2xl shadow-black/40 md:mt-1 md:rounded-[1.5rem]"
-                src="/uploads/profile-media/contact-portrait.jpg"
+                src={contactPortraitUrl}
                 alt="程璐照片"
               />
             </button>
@@ -1026,7 +1041,7 @@ function Contact({ language, onOpenImage }: { language: Language; onOpenImage: (
               <button
                 type="button"
                 className="mt-5 inline-flex items-center gap-2 rounded-full border border-primary/35 px-5 py-2 text-sm font-semibold text-primary transition hover:bg-primary hover:text-black"
-                onClick={() => onOpenImage({ src: "/uploads/profile-media/wechat-qr.jpg", alt: "微信二维码" })}
+                onClick={() => onOpenImage({ src: wechatQrUrl, alt: "微信二维码" })}
               >
                 {isEnglish ? "View" : "点击查看"} <ArrowRight size={16} />
               </button>
