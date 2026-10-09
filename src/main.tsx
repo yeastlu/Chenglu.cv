@@ -115,6 +115,40 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const hero = document.querySelector<HTMLElement>(".hero");
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const distance =
+        document.documentElement.scrollHeight - window.innerHeight;
+      document.documentElement.style.setProperty(
+        "--reading-progress",
+        String(distance > 0 ? window.scrollY / distance : 0),
+      );
+      hero?.style.setProperty(
+        "--hero-y",
+        preference.matches || window.innerWidth < 760
+          ? "0px"
+          : `${Math.min(window.scrollY * 0.18, 120)}px`,
+      );
+    };
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    preference.addEventListener("change", schedule);
+    update();
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      preference.removeEventListener("change", schedule);
+      window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!preview) return;
     const previousOverflow = document.body.style.overflow;
     dialog.current?.showModal();
@@ -213,13 +247,18 @@ function App() {
 
       <main id="main">
         <section id="top" className="hero page-width">
+          <p className="hero-kicker eyebrow hero-enter">
+            {c.eyebrow}
+            <span>PORTFOLIO / 2026</span>
+          </p>
+          <h1 className="hero-name" aria-label="程璐 Cheng Lu">
+            <span>{c.headline[0]}</span>
+            <span>
+              {c.headline[1]}
+              <i aria-hidden="true">↗</i>
+            </span>
+          </h1>
           <div className="hero-copy">
-            <p className="eyebrow hero-enter">{c.eyebrow}</p>
-            <h1 className="hero-enter">
-              {c.headline[0]}
-              <br />
-              <span>{c.headline[1]}</span>
-            </h1>
             <p className="hero-intro hero-enter">{c.intro}</p>
             <p className="hero-bio hero-enter">{c.bio}</p>
             <div className="hero-links hero-enter">
@@ -273,6 +312,9 @@ function App() {
           ))}
         </div>
 
+        <div className="work-ribbon" aria-hidden="true">
+          <span>BRANDS & PEOPLE ↗ CULTURE & CURIOSITY ↗ AI & IDEAS ↗</span>
+        </div>
         <section className="focus-section section-space" id="focus">
           <div className="page-width">
             <div className="section-heading reveal">
@@ -322,7 +364,12 @@ function App() {
         <section id="work" className="work-section section-space page-width">
           <div className="section-intro reveal">
             <p className="eyebrow">{c.workLabel}</p>
-            <h2>{c.workTitle}</h2>
+            <h2>
+              <span className="section-display">
+                SELECTED WORK<span className="title-dot">*</span>
+              </span>
+              <span className="section-caption">{c.workTitle}</span>
+            </h2>
             <p>{c.workIntro}</p>
           </div>
           <div className="project-grid">
@@ -371,23 +418,25 @@ function App() {
                     </div>
                   </div>
                 )}
-                <div className="project-meta">
-                  <span>{project.category}</span>
-                  <span>0{i + 1}</span>
+                <div className="project-copy">
+                  <div className="project-meta">
+                    <span>{project.category}</span>
+                    <span>0{i + 1}</span>
+                  </div>
+                  <h3>{project.title}</h3>
+                  <p className="project-description">{project.description}</p>
+                  <div className="project-result">
+                    <strong>{project.metric}</strong>
+                    <span>{project.metricLabel}</span>
+                  </div>
+                  <details className="project-details">
+                    <summary>
+                      {c.projectDetail}
+                      <Plus size={18} />
+                    </summary>
+                    <p>{project.detail}</p>
+                  </details>
                 </div>
-                <h3>{project.title}</h3>
-                <p className="project-description">{project.description}</p>
-                <div className="project-result">
-                  <strong>{project.metric}</strong>
-                  <span>{project.metricLabel}</span>
-                </div>
-                <details className="project-details">
-                  <summary>
-                    {c.projectDetail}
-                    <Plus size={18} />
-                  </summary>
-                  <p>{project.detail}</p>
-                </details>
               </article>
             ))}
           </div>
@@ -445,7 +494,12 @@ function App() {
         >
           <div className="section-intro reveal">
             <p className="eyebrow">{c.experienceLabel}</p>
-            <h2>{c.experienceTitle}</h2>
+            <h2>
+              <span className="section-display">
+                THE JOURNEY<span className="title-dot">↗</span>
+              </span>
+              <span className="section-caption">{c.experienceTitle}</span>
+            </h2>
             <p>{c.experienceIntro}</p>
           </div>
           <div className="career-layout">
