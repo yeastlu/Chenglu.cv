@@ -659,6 +659,21 @@ details[open] > summary svg {
   line-height: 1.85;
   color: #c2c6b7;
   padding: 0 12px 24px 0;
+  white-space: pre-line;
+}
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+  padding: 0 0 26px;
+}
+.project-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent);
+  font-size: 15px;
+  line-height: 1.5;
 }
 .campaign-art {
   position: sticky;
@@ -681,9 +696,10 @@ details[open] > summary svg {
   margin-top: 40px;
 }
 .campaign-art > strong {
-  font: 500 clamp(100px, 16vw, 245px) / 0.85 var(--display);
-  letter-spacing: -0.035em;
-  margin-top: 15px;
+  font: 500 clamp(64px, 9vw, 132px) / 0.88 var(--display);
+  letter-spacing: -0.025em;
+  margin-top: 18px;
+  overflow-wrap: anywhere;
 }
 .campaign-art > strong > span {
   font-size: 0.5em;
@@ -1564,8 +1580,8 @@ html[lang="en"] .contact-layout h2 {
     margin-top: 25px;
   }
   .campaign-art > strong {
-    font-size: 40vw;
-    line-height: 0.8;
+    font-size: clamp(62px, 20vw, 88px);
+    line-height: 0.9;
   }
   .campaign-bottom {
     font-size: 12px;

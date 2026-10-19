@@ -13,7 +13,13 @@ import { content, Language } from "./content";
 import "./index.css";
 
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
-const targets = ["work", "practice", "experience", "contact"];
+const targets = [
+  "experience",
+  "ai-marketing",
+  "brand-pr",
+  "inbound-travel",
+  "contact",
+];
 const imageDimensions: Record<string, [number, number]> = {
   portrait: [1280, 1920],
   "global-activation": [1440, 1080],
@@ -262,9 +268,13 @@ function App() {
             <p className="hero-intro hero-enter">{c.intro}</p>
             <p className="hero-bio hero-enter">{c.bio}</p>
             <div className="hero-links hero-enter">
-              <a className="button button-dark" href="#work">
+              <a className="button button-dark" href="#experience">
                 {c.explore}
                 <ArrowDown size={17} />
+              </a>
+              <a className="text-link" href="#ai-marketing">
+                {c.projectCta}
+                <ArrowUpRight size={16} />
               </a>
               <a
                 className="text-link"
@@ -311,182 +321,6 @@ function App() {
             </div>
           ))}
         </div>
-
-        <div className="work-ribbon" aria-hidden="true">
-          <span>BRANDS & PEOPLE ↗ CULTURE & CURIOSITY ↗ AI & IDEAS ↗</span>
-        </div>
-        <section className="focus-section section-space" id="focus">
-          <div className="page-width">
-            <div className="section-heading reveal">
-              <p className="eyebrow">{c.focusLabel}</p>
-              <span className="status">
-                <i />
-                {c.focusYear}
-              </span>
-            </div>
-            <div className="focus-layout">
-              <figure className="focus-photo reveal">
-                <button
-                  className="image-button"
-                  onClick={() => openPhoto("global-activation", c.focusAlt)}
-                  aria-label={`${c.enlarge}: ${c.focusAlt}`}
-                >
-                  <Photo name="global-activation" alt={c.focusAlt} />
-                  <span className="expand-icon">
-                    <ArrowUpRight size={20} />
-                  </span>
-                </button>
-                <figcaption>{c.focusCaption}</figcaption>
-              </figure>
-              <div className="focus-copy reveal">
-                <h2>
-                  {c.focusTitle[0]}
-                  <br />
-                  <em>{c.focusTitle[1]}</em>
-                </h2>
-                <p>{c.focusIntro}</p>
-                <div className="focus-services">
-                  {c.focusSteps.map(([title, description], i) => (
-                    <div key={title}>
-                      <span className="service-number">0{i + 1}</span>
-                      <div>
-                        <h3>{title}</h3>
-                        <p>{description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="work" className="work-section section-space page-width">
-          <div className="section-intro reveal">
-            <p className="eyebrow">{c.workLabel}</p>
-            <h2>
-              <span className="section-display">
-                SELECTED WORK<span className="title-dot">*</span>
-              </span>
-              <span className="section-caption">{c.workTitle}</span>
-            </h2>
-            <p>{c.workIntro}</p>
-          </div>
-          <div className="project-grid">
-            {c.projects.map((project, i) => (
-              <article
-                className={`project reveal project-${project.id}`}
-                id={`project-${project.id}`}
-                key={project.id}
-              >
-                {project.image ? (
-                  <button
-                    className="project-image image-button"
-                    aria-label={`${c.enlarge}: ${project.alt}`}
-                    onClick={() => openPhoto(project.image, project.alt)}
-                  >
-                    <Photo name={project.image} alt={project.alt} />
-                    <span className="image-index">
-                      0{i + 1} / {project.client}
-                    </span>
-                    <span className="expand-icon">
-                      <ArrowUpRight size={20} />
-                    </span>
-                  </button>
-                ) : (
-                  <div
-                    className="campaign-art"
-                    role="img"
-                    aria-label={
-                      language === "zh"
-                        ? "和路雪案例数据排版：100+ 达人，4 类内容，1000 万+品牌话题曝光"
-                        : "Wall’s campaign: 100+ creators, 4 categories, 10M+ brand-topic views"
-                    }
-                  >
-                    <span className="image-index">02 / {project.client}</span>
-                    <span className="campaign-label">
-                      THE POWER OF A<br />
-                      BETTER STORY.
-                    </span>
-                    <strong>
-                      10M<span>+</span>
-                    </strong>
-                    <div className="campaign-bottom">
-                      <span>100+ CREATORS</span>
-                      <span>4 CATEGORIES</span>
-                      <ArrowUpRight size={30} />
-                    </div>
-                  </div>
-                )}
-                <div className="project-copy">
-                  <div className="project-meta">
-                    <span>{project.category}</span>
-                    <span>0{i + 1}</span>
-                  </div>
-                  <h3>{project.title}</h3>
-                  <p className="project-description">{project.description}</p>
-                  <div className="project-result">
-                    <strong>{project.metric}</strong>
-                    <span>{project.metricLabel}</span>
-                  </div>
-                  <details className="project-details">
-                    <summary>
-                      {c.projectDetail}
-                      <Plus size={18} />
-                    </summary>
-                    <p>{project.detail}</p>
-                  </details>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="practice-section section-space" id="practice">
-          <div className="page-width practice-layout">
-            <div className="practice-copy reveal">
-              <p className="eyebrow">{c.aiLabel}</p>
-              <h2>
-                {c.aiTitle[0]}
-                <br />
-                <em>{c.aiTitle[1]}</em>
-              </h2>
-              <p className="practice-intro">{c.aiIntro}</p>
-              <ol className="practice-steps">
-                {c.aiSteps.map(([title, description], i) => (
-                  <li key={title}>
-                    <span>0{i + 1}</span>
-                    <div>
-                      <h3>{title}</h3>
-                      <p>{description}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div className="notebook reveal">
-              <div className="notebook-header">
-                <span className="eyebrow">{c.notebook}</span>
-                <span aria-hidden="true">↗</span>
-              </div>
-              <h3>{c.question}</h3>
-              <p>{c.notebookIntro}</p>
-              <div className="product-flow">
-                {c.flow.map(([label, value]) => (
-                  <div key={label}>
-                    <span>{label}</span>
-                    <p>{value}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="notebook-note">{c.aiNote}</p>
-              <a className="text-link" href="#project-travel">
-                {c.aiLink}
-                <ArrowUpRight size={18} />
-              </a>
-            </div>
-          </div>
-        </section>
 
         <section
           id="experience"
@@ -542,6 +376,102 @@ function App() {
             </aside>
           </div>
         </section>
+
+        <div className="work-ribbon" aria-hidden="true">
+          <span>AI PRODUCT ↗ BRAND PR ↗ INBOUND TRAVEL ↗</span>
+        </div>
+        {c.workSections.map((section) => (
+          <section
+            id={section.id}
+            className="work-section section-space page-width"
+            key={section.id}
+          >
+            <div className="section-intro reveal">
+              <p className="eyebrow">{section.label}</p>
+              <h2>
+                <span className="section-display">
+                  {section.display}
+                  <span className="title-dot">*</span>
+                </span>
+                <span className="section-caption">{section.title}</span>
+              </h2>
+              <p>{section.intro}</p>
+            </div>
+            <div className="project-grid">
+              {section.projects.map((project, i) => (
+                <article
+                  className={`project reveal project-${project.id}`}
+                  id={`project-${project.id}`}
+                  key={project.id}
+                >
+                  {project.image ? (
+                    <button
+                      className="project-image image-button"
+                      aria-label={`${c.enlarge}: ${project.alt}`}
+                      onClick={() => openPhoto(project.image, project.alt)}
+                    >
+                      <Photo name={project.image} alt={project.alt} />
+                      <span className="image-index">
+                        0{i + 1} / {project.client}
+                      </span>
+                      <span className="expand-icon">
+                        <ArrowUpRight size={20} />
+                      </span>
+                    </button>
+                  ) : (
+                    <div
+                      className="campaign-art"
+                      role="img"
+                      aria-label={`${project.client}: ${project.title}`}
+                    >
+                      <span className="image-index">
+                        0{i + 1} / {project.client}
+                      </span>
+                      <span className="campaign-label">{project.category}</span>
+                      <strong>
+                        {project.metric}
+                        <span>↗</span>
+                      </strong>
+                      <div className="campaign-bottom">
+                        <span>{project.metricLabel}</span>
+                        <ArrowUpRight size={30} />
+                      </div>
+                    </div>
+                  )}
+                  <div className="project-copy">
+                    <div className="project-meta">
+                      <span>{project.category}</span>
+                      <span>0{i + 1}</span>
+                    </div>
+                    <h3>{project.title}</h3>
+                    <p className="project-description">{project.description}</p>
+                    <div className="project-result">
+                      <strong>{project.metric}</strong>
+                      <span>{project.metricLabel}</span>
+                    </div>
+                    <details className="project-details">
+                      <summary>
+                        {c.projectDetail}
+                        <Plus size={18} />
+                      </summary>
+                      <p>{project.detail}</p>
+                      {"links" in project && project.links && (
+                        <div className="project-links">
+                          {project.links.map(([label, href]) => (
+                            <a href={href} key={href} target="_blank">
+                              {label}
+                              <ArrowUpRight size={16} />
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </details>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
 
         <footer id="contact" className="contact-section">
           <div className="page-width">
